@@ -1,9 +1,9 @@
 <template>
   <div>
     <FinalForm
+      :initialValues="{userAcc: user, password: password}"
       :submit="handleSubmit"
-      @change="updateState"
-      :initialValues="initialValues">
+      @change="updateState">
       <form slot-scope="props" @submit="props.handleSubmit">
         <FinalField name="userAcc" :validate="required">
           <div slot-scope="props">
@@ -66,13 +66,14 @@ export default {
         email: 'example@gmail.com'
       },
       user: 'admin',
-      password: 'admin'
+      password: 'adminPassword'
     }
   },
   methods: {
     async handleSubmit (state) {
       await sleep(2000)
       console.log(state)
+      this.login(state.userAcc, state.password)
     },
     updateState (state) {
       this.formState = state
@@ -90,6 +91,13 @@ export default {
     },
     noSpecialChars (v) {
       return /[!@#$%^&*()]/.test(v) ? 'Please do not use specfial chars' : null
+    },
+    login (userAcc, password) {
+      if (userAcc === this.user && password === this.password) {
+        this.$router.replace({ name: 'home' })
+      } else {
+        window.alert('The username or password is incorrect')
+      }
     }
   }
 }
