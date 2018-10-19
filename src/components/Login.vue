@@ -1,10 +1,10 @@
 <template>
   <div>
     <FinalForm
-      :initialValues="{userAcc: user, password: password}"
       :submit="handleSubmit"
       @change="updateState">
       <form slot-scope="props" @submit="props.handleSubmit">
+        <div class="note note--down"><p>{{ note }}</p></div>
         <FinalField name="userAcc" :validate="required">
           <div slot-scope="props">
             <input
@@ -47,6 +47,7 @@
 
 <script>
 import { FinalForm, FinalField } from 'vue-final-form'
+
 function sleep (timeout) {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -62,27 +63,33 @@ export default {
   data () {
     return {
       formState: null,
-      initialValues: {
-        email: 'example@gmail.com'
-      },
       user: 'admin',
-      password: 'adminPassword'
+      password: 'adminPassword',
+      note: ''
+    }
+  },
+  watch: {
+    note () {
+      const note = document.querySelector('.note')
+      if (this.note.length) {
+        note.classList.add('note--up')
+      } else {
+        note.classList.remove('note--up')
+        note.classList.add('note--down')
+      }
     }
   },
   methods: {
     async handleSubmit (state) {
       await sleep(2000)
       console.log(state)
-      this.login(state.userAcc, state.password)
+      await this.login(state.userAcc, state.password)
     },
     updateState (state) {
       this.formState = state
     },
     required (v) {
       return v ? null : 'This field is required!'
-    },
-    matchedPassword (value, values) {
-      return value === values.password ? null : 'Mismatched password!'
     },
     range (min, max) {
       return value => {
@@ -95,9 +102,9 @@ export default {
     login (userAcc, password) {
       if (userAcc === this.user && password === this.password) {
         this.$router.replace({ name: 'home' })
-      } else {
-        window.alert('The username or password is incorrect')
+        this.note = ''
       }
+      this.note = 'Login failed'
     }
   }
 }
