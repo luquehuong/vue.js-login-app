@@ -1,6 +1,6 @@
-# vue.js-login-app
+# Login app
 
-> A Vue.js project
+> A Vue.js project that write the login feature, using vue-final-form library.
 
 ## Build Setup
 
